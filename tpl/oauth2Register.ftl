@@ -6,6 +6,7 @@
 [#-- @ftlvariable name="fields" type="java.util.List<io.fusionauth.domain.form.FormField>" --]
 [#-- @ftlvariable name="hideBirthDate" type="boolean" --]
 [#-- @ftlvariable name="identityProviders" type="java.util.Map<java.lang.String, java.util.List<io.fusionauth.domain.provider.BaseIdentityProvider<?>>>" --]
+[#-- @ftlvariable name="idpRedirectState" type="java.lang.String" --]
 [#-- @ftlvariable name="passwordValidationRules" type="io.fusionauth.domain.PasswordValidationRules" --]
 [#-- @ftlvariable name="parentEmailRequired" type="boolean" --]
 [#-- @ftlvariable name="pendingIdPLink" type="io.fusionauth.domain.provider.PendingIdPLink" --]
@@ -71,7 +72,7 @@
 
         [#-- Begin Self Service Custom Registration Form Steps --]
         [#if fields?has_content]
-          <fieldset class="space-y-2">
+          <fieldset>
             [@helpers.hidden name="collectBirthDate"/]
             [#list fields as field]
               [@helpers.customField field field.key field?is_first?then(true, false) field.key /]
@@ -100,7 +101,7 @@
         [#-- End Custom Self Service Registration Form Steps --]
         [#else]
         [#-- Begin Basic Self Service Registration Form --]
-        <fieldset class="space-y-2">
+        <fieldset>
           [@helpers.hidden name="collectBirthDate"/]
           [#if !collectBirthDate && (!application.registrationConfiguration.birthDate.enabled || hideBirthDate)]
             [@helpers.hidden name="user.birthDate" dateTimeFormat="yyyy-MM-dd"/]
@@ -150,16 +151,12 @@
           [@helpers.captchaBadge showCaptcha=showCaptcha captchaMethod=tenant.captchaConfiguration.captchaMethod siteKey=tenant.captchaConfiguration.siteKey/]
         </fieldset>
 
-        <fieldset class="mt-4">
-          [@helpers.input id="rememberDevice" type="checkbox" name="rememberDevice" label=theme.message('remember-device') value="true" uncheckedValue="false"]
-            <div class="tooltip tooltip-right" data-tip="${theme.message('{tooltip}remember-device')}">
-              <i class="fa fa-info-circle"></i>[#t/]
-            </div>
-          [/@helpers.input]
-        </fieldset>
+        [@helpers.input id="rememberDevice" type="checkbox" name="rememberDevice" label=theme.message('remember-device') value="true" uncheckedValue="false"]
+          <i class="fa fa-info-circle" data-tooltip="${theme.message('{tooltip}remember-device')}"></i>[#t/]
+        [/@helpers.input]
 
-        <div class="mt-4">
-          [@helpers.button color="btn-primary" icon="key" text=theme.message('register')/]
+        <div class="form-row">
+          [@helpers.button icon="key" text=theme.message('register')/]
           <p class="mt-2">[@helpers.link url="/oauth2/authorize"]${theme.message('return-to-login')}[/@helpers.link]</p>
         </div>
         [/#if]
@@ -175,7 +172,7 @@
 
         [#-- Identity Provider Buttons (if you want to include these, remove the if-statement) --]
         [#if true]
-          [@helpers.alternativeLogins clientId=client_id identityProviders=identityProviders![] passwordlessEnabled=false bootstrapWebauthnEnabled=false/]
+          [@helpers.alternativeLogins clientId=client_id identityProviders=identityProviders![] passwordlessEnabled=false bootstrapWebauthnEnabled=false idpRedirectState=idpRedirectState/]
         [/#if]
         [#-- End Identity Provider Buttons --]
 

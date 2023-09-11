@@ -23,12 +23,12 @@
         <p>
           ${theme.message('forgot-password')}
         </p>
-        <fieldset class="mt-4 space-y-2">
+        <fieldset class="push-less-top">
           [@helpers.input type="text" name="email" id="email" autocapitalize="none" autofocus=true autocomplete="on" autocorrect="off" placeholder=theme.message('email') leftAddon="user" required=true/]
           [@helpers.captchaBadge showCaptcha=showCaptcha captchaMethod=tenant.captchaConfiguration.captchaMethod siteKey=tenant.captchaConfiguration.siteKey/]
         </fieldset>
-        <div class="mt-4">
-          [@helpers.button color="btn-primary" text=theme.message('submit')/]
+        <div class="form-row">
+          [@helpers.button text=theme.message('submit')/]
           <p class="mt-2">[@helpers.link url="/oauth2/authorize"]${theme.message('return-to-login')}[/@helpers.link]</p>
         </div>
       </form>

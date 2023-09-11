@@ -27,12 +27,12 @@
 
 [#macro html]
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en">
   [#nested/]
 </html>
 [/#macro]
 
-[#macro head title="Login | FusionAuth" author="FusionAuth" description="User Management Redefined. A Single Sign-On solution for your entire enterprise."]
+[#macro head title="Login | CodeSmooth" author="CodeSmooth" description="Login to CodeSmooth programming learning platform."]
 <head>
   <title>${title}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -82,7 +82,7 @@
   [#-- End Favicon Madness --]
 
   <link rel="stylesheet" href="/css/font-awesome-4.7.0.min.css"/>
-  <!--<link rel="stylesheet" href="/css/fusionauth-style.css?version=${version}"/>//-->
+  <link rel="stylesheet" href="/css/fusionauth-style.css?version=${version}"/>
 
   [#-- Theme Stylesheet, only Authorize defines this boolean.
        Using the ?no_esc on the stylesheet to allow selectors that contain a > symbols.
@@ -127,30 +127,28 @@
 [/#macro]
 
 [#macro body]
-<body class="app-sidebar-closed h-full">
-  <div class="min-h-full bg-base-200 flex flex-col">
-    [#nested/]
-  </div>
+<body class="app-sidebar-closed">
+<main>
+  [#nested/]
+</main>
 </body>
 [/#macro]
 
 [#macro header]
-  <div class="navbar bg-base-100 justify-end pr-4">
-    <div class="flex-none">
-      [#if request.requestURI == "/"]
-        <a href="${request.contextPath}/admin/" title="Administrative login"><i class="fa fa-lock" style="font-size: 18px;"></i></a>
-      [#elseif request.requestURI?starts_with("/account")]
-        <a href="${request.contextPath}/account/logout?client_id=${client_id!''}" title="Logout"><i class="fa fa-sign-out"></i></a>
-      [#else]
-        <a target="_blank" href="https://fusionauth.io/docs/"><i class="fa fa-question-circle-o"></i> ${theme.message("help")}</a>
-      [/#if]
-    </div>
-  </div>
+  
 
   [#nested/]
 [/#macro]
 
 [#macro alternativeLoginsScript clientId identityProviders]
+  [#if identityProviders["EpicGames"]?has_content || identityProviders["Facebook"]?has_content || identityProviders["Google"]?has_content ||
+         identityProviders["LinkedIn"]?has_content || identityProviders["Nintendo"]?has_content || identityProviders["OpenIDConnect"]?has_content ||
+         identityProviders["SAMLv2"]?has_content || identityProviders["SonyPSN"]?has_content || identityProviders["Steam"]?has_content ||
+         identityProviders["Twitch"]?has_content || identityProviders["Xbox"]?has_content || identityProviders["Apple"]?has_content ||
+         identityProviders["Twitter"]?has_content]
+    [#-- Include Helper.js instead of loading dynamically from other IdP JS. IdP JS files will still load the script if it has not already been loaded --]
+    <script id="idp_helper" src="${request.contextPath}/js/identityProvider/Helper.js?version=${version}"></script>
+  [/#if]
   [#if identityProviders["Apple"]?has_content]
     <script src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
     <script src="${request.contextPath}/js/identityProvider/Apple.js?version=${version}"></script>
@@ -159,8 +157,8 @@
     <script src="https://connect.facebook.net/en_US/sdk.js"></script>
     <script src="${request.contextPath}/js/identityProvider/Facebook.js?version=${version}" data-app-id="${identityProviders["Facebook"][0].lookupAppId(clientId)}"></script>
   [/#if]
-  [#if identityProviders["Google"]?has_content]
-    <script src="https://apis.google.com/js/api:client.js"></script>
+  [#if identityProviders["Google"]?has_content && identityProviders["Google"][0].lookupLoginMethod(clientId) != "UseRedirect"]
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="${request.contextPath}/js/identityProvider/Google.js?version=${version}" data-client-id="${identityProviders["Google"][0].lookupClientId(clientId)}"></script>
   [/#if]
   [#if identityProviders["Twitter"]?has_content]
@@ -175,23 +173,21 @@
   [/#if]
 [/#macro]
 
-[#macro main title="Login" rowClass="row center-xs" colClass="col-xs col-sm-8 col-md-6 col-lg-5 col-xl-4"]
-<main class="grow">
-  <div class="mt-16">
-    [@printErrorAlerts rowClass colClass/]
-    [@printInfoAlerts rowClass colClass/]
-
-    <div class="card w-96 bg-base-100 shadow-xl mx-auto">
-      <div class="card-body">
-        [#if title?has_content]
-          <h2 class="card-title">${title}</h2>
-        [/#if]
-
-        [#nested/]
+[#macro main title="Login" rowClass="row center-xs" colClass="col-xs col-sm-10 col-md-8 col-lg-6 col-xl-5"]
+<main class="page-body container">
+  [@printErrorAlerts rowClass colClass/]
+  [@printInfoAlerts rowClass colClass/]
+  <div class="${rowClass}">
+    <div class="${colClass}">
+      <div class="panel" data-in-progress>
+        <main>
+          [#nested/]
+        </main>
       </div>
     </div>
-
-    <div class="mt-4 w-96 mx-auto">
+  </div>
+  <div class="${rowClass}">
+    <div class="${colClass}">
       [@localSelector/]
     </div>
   </div>
@@ -212,12 +208,7 @@
 [/#macro]
 
 [#macro localSelector]
-<select id="locale-select" name="locale" class="select w-full">
-  <option value="en" [#if locale == 'en']selected[/#if]>English</option>
-    [#list theme.additionalLocales() as l]
-      <option value="${l}" [#if locale == l]selected[/#if]>${l.getDisplayLanguage(locale)}</option>
-    [/#list]
-</select>
+
 [/#macro]
 
 [#macro accountFooter rowClass colClass actionURL actionText actionDirection]
@@ -323,18 +314,12 @@
 
   [#-- Powered by FusionAuth branding. This backlink helps FusionAuth web ranking so more
        people can find us! However, we always want to give the developer choice, remove this if you like. --]
-  <footer class="footer footer-center p-4 bg-base-300 text-base-content">
-    <div class="flex">
-      <p class="whitespace-nowrap">Powered by</p>
-        <a href="https://fusionauth.io" title="The best developer IAM in the universe!">
-          <picture>
-            <source srcset="/images/logo-white-orange.svg" media="(prefers-color-scheme: dark)">
-            <source srcset="/images/logo-gray.svg" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)">
-            <img src="/images/logo-white-orange.svg" class="h-6 max-w-none" alt="FusionAuth">
-          </picture>
-        </a>
-    </div>
-  </footer>
+  <div style="position: fixed; bottom: 5px; right: 0; padding-bottom: 5px; padding-right: 10px;">
+    <span style="padding-right: 5px;">Powered by </span>
+    <a href="https://fusionauth.io" title="The best developer IAM in the universe!">
+      <img src="/images/logo-gray.svg" alt="FusionAuth" height="24" style="margin-bottom: -7px;">
+    </a>
+  </div>
 [/#macro]
 
 [#-- Below are the social login buttons and helpers --]
@@ -384,23 +369,40 @@
  </button>
 [/#macro]
 
-[#macro googleButton identityProvider clientId]
- <button id="google-login-button" class="google login-button" data-login-method="${identityProvider.lookupLoginMethod(clientId)!''}" data-scope="${identityProvider.lookupScope(clientId)!''}" data-identity-provider-id="${identityProvider.id}">
-   <div>
-     <div class="icon">
-       <svg version="1.1" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-         <g>
-           <path class="cls-1" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
-           <path class="cls-2" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
-           <path class="cls-3" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
-           <path class="cls-4" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
-           <path class="cls-5" d="M0 0h48v48H0z"></path>
-         </g>
-       </svg>
-     </div>
-     <div class="text">${identityProvider.lookupButtonText(clientId)?trim}</div>
-   </div>
- </button>
+[#macro googleButton identityProvider clientId idpRedirectState=""]
+  [#-- When using this loginMethod - the Google JavaScript API is not used at all. --]
+  [#if identityProvider.lookupLoginMethod(clientId) == "UseRedirect"]
+    <button id="google-login-button" class="google login-button" data-login-method="UseRedirect" data-scope="${identityProvider.lookupScope(clientId)!''}" data-identity-provider-id="${identityProvider.id}">
+      <div>
+       <div class="icon">
+         <svg version="1.1" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+           <g>
+             <path class="cls-1" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+             <path class="cls-2" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+             <path class="cls-3" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+             <path class="cls-4" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+             <path class="cls-5" d="M0 0h48v48H0z"></path>
+           </g>
+         </svg>
+       </div>
+       <div class="text">${identityProvider.lookupButtonText(clientId)?trim}</div>
+      </div>
+    </button>
+  [#else] [#-- UsePopup or UseVendorJavaScript --]
+    [#--
+     Use the Google Identity Service (GIS) API.
+     https://developers.google.com/identity/gsi/web/reference/html-reference
+    --]
+    <div id="g_id_onload" [#list identityProvider.lookupAPIProperties(clientId)!{} as attribute, value] data-${attribute}="${value}" [/#list]
+         data-client_id="${identityProvider.lookupClientId(clientId)}"
+         data-login_uri="${currentBaseURL}/oauth2/callback?state=${idpRedirectState}&identityProviderId=${identityProvider.id}" >
+    </div>
+    [#-- This the Google Signin button. If only using One tap, you can delete or commment out this element --]
+    <div class="g_id_signin" [#list identityProvider.lookupButtonProperties(clientId)!{} as attribute, value] data-${attribute}="${value}" [/#list]
+         [#-- Optional click handler, when using ux_mode=popup. --]
+         data-click_listener="googleButtonClickHandler" >
+    </div>
+  [/#if]
 [/#macro]
 
 [#macro linkedInBottom identityProvider clientId]
@@ -572,7 +574,7 @@
 </button>
 [/#macro]
 
-[#macro alternativeLogins clientId identityProviders passwordlessEnabled bootstrapWebauthnEnabled=false]
+[#macro alternativeLogins clientId identityProviders passwordlessEnabled bootstrapWebauthnEnabled=false idpRedirectState=""]
   [#if identityProviders?has_content || passwordlessEnabled || bootstrapWebauthnEnabled]
     <div class="login-button-container">
       <div class="hr-container">
@@ -641,7 +643,7 @@
 
       [#if identityProviders["Google"]?has_content]
       <div class="form-row push-less-top">
-        [@googleButton identityProvider=identityProviders["Google"][0] clientId=clientId/]
+        [@googleButton identityProvider=identityProviders["Google"][0] clientId=clientId idpRedirectState=idpRedirectState/]
       </div>
       [/#if]
 
@@ -725,18 +727,18 @@
 [/#macro]
 
 [#macro alert message type icon includeDismissButton=true rowClass="row center-xs" colClass="col-xs col-sm-8 col-md-6 col-lg-5 col-xl-4"]
-<div class="alert alert-${type} mx-auto w-96 mb-4">
-  <div>
-    <i class="fa fa-${icon}"></i>
-    <p>
-      ${message}
-    </p>
-  </div>
-  [#if includeDismissButton]
-    <div class="flex-none">
-      <a href="#" class="dismiss-button"><i class="fa fa-times-circle"></i></a>
+<div class="${rowClass}">
+  <div class="${colClass}">
+    <div class="alert ${type}">
+      <i class="fa fa-${icon}"></i>
+      <p>
+        ${message}
+      </p>
+      [#if includeDismissButton]
+        <a href="#" class="dismiss-button"><i class="fa fa-times-circle"></i></a>
+      [/#if]
     </div>
-  [/#if]
+  </div>
 </div>
 [/#macro]
 
@@ -756,10 +758,10 @@
 
 [#-- Input field of type. --]
 [#macro input type name id autocapitalize="none" autocomplete="on" autocorrect="off" autofocus=false spellcheck="false" label="" placeholder="" leftAddon="" required=false tooltip="" disabled=false class="" dateTimeFormat="" value="" uncheckedValue=""]
-<div class="form-control w-full">
+<div class="form-row">
   [#if type == "checkbox"]
     [@_input_checkbox name=name value=value uncheckedValue=uncheckedValue label=label]
-    [#nested]
+     [#nested]
     [/@_input_checkbox]
   [#else]
     [@_input_text type=type name=name id=id autocapitalize=autocapitalize autocomplete=autocomplete autocorrect=autocorrect autofocus=autofocus spellcheck=spellcheck label=label placeholder=placeholder leftAddon=leftAddon required=required tooltip=tooltip disabled=disabled class=class dateTimeFormat=dateTimeFormat/]
@@ -779,11 +781,11 @@
   [/#compress]
   [/#if]
   [#if leftAddon?has_content]
-  <div class="input-group">
+  <div class="input-addon-group">
     <span class="icon"><i class="fa fa-${leftAddon}"></i></span>
   [/#if]
   [#local value=("((" + name + ")!'')")?eval/]
-      <input id="${id}" type="${type}" name="${name}" [#if type != "password"]value="${value}"[/#if] class="input input-bordered w-full ${fieldMessages[name]?has_content?then(' input-error', '')} ${class}" autocapitalize="${autocapitalize}" autocomplete="${autocomplete}" autocorrect="${autocorrect}" spellcheck="${spellcheck}" [#if autofocus]autofocus="autofocus"[/#if] placeholder="${placeholder}" [#if disabled]disabled="disabled"[/#if]/>
+  <input id="${id}" type="${type}" name="${name}" [#if type != "password"]value="${value}"[/#if] class="${class}" autocapitalize="${autocapitalize}" autocomplete="${autocomplete}" autocorrect="${autocorrect}" spellcheck="${spellcheck}" [#if autofocus]autofocus="autofocus"[/#if] placeholder="${placeholder}" [#if disabled]disabled="disabled"[/#if]/>
   [#if dateTimeFormat != ""]
       <input type="hidden" name="${name}@dateTimeFormat" value="${dateTimeFormat}"/>
   [/#if]
@@ -793,17 +795,15 @@
 [/#macro]
 
 [#macro _input_checkbox name value uncheckedValue label]
-<label class="label cursor-pointer">
-  <span class="label-text">
-    ${label?has_content?then(label, theme.message(name))}
-    [#nested/]
-  </span> 
+<label>
   [#local actualValue = ("((" + name + ")!'')")?eval/]
   [#local checked = actualValue?is_boolean?then(actualValue == value?boolean, actualValue == value)/]
   [#if uncheckedValue?has_content]
   <input type="hidden" name="__cb_${name}" value="${uncheckedValue}"/>
   [/#if]
-  <input type="checkbox" class="toggle toggle-secondary" name=${name} value="${value}" [#if checked]checked=checked[/#if]/>
+  <input type="checkbox" name=${name} value="${value}" [#if checked]checked=checked[/#if]/>
+  &nbsp; ${label?has_content?then(label, theme.message(name))}
+  [#nested/]
 </label>
 [/#macro]
 
@@ -955,31 +955,24 @@
 
 [#macro errors field]
 [#if fieldMessages[field]?has_content]
-<label class="label mt-2 text-error">
-  [#list fieldMessages[field] as message]${message?no_esc}[#if message_has_next], [/#if][/#list]
-</label>
+<span class="error">[#list fieldMessages[field] as message]${message?no_esc}[#if message_has_next], [/#if][/#list]</span>
 [/#if]
 [/#macro]
 
-[#macro button text icon="arrow-right" color="" disabled=false name="" value=""]
-<button class="${color} btn${disabled?then(' btn-disabled', '')} gap-2"[#if disabled] disabled="disabled"[/#if][#if name !=""]name="${name}"[/#if][#if value !=""]value="${value}"[/#if]><i class="fa fa-${icon}"></i> ${text}</button>
+[#macro button text icon="arrow-right" color="blue" disabled=false name="" value=""]
+<button class="button${disabled?then(' disabled', '')}"[#if disabled] disabled="disabled"[/#if][#if name !=""]name="${name}"[/#if][#if value !=""]value="${value}"[/#if]><i class="fa fa-${icon}"></i> ${text}</button>
 [/#macro]
 
 [#macro link url extraParameters=""]
-<a class="link link-secondary" href="${url}?tenantId=${(tenantId)!''}&client_id=${(client_id?url)!''}&nonce=${(nonce?url)!''}&pendingIdPLinkId=${(pendingIdPLinkId)!''}&redirect_uri=${(redirect_uri?url)!''}&response_mode=${(response_mode?url)!''}&response_type=${(response_type?url)!''}&scope=${(scope?url)!''}&state=${(state?url)!''}&timezone=${(timezone?url)!''}&metaData.device.name=${(metaData.device.name?url)!''}&metaData.device.type=${(metaData.device.type?url)!''}${(extraParameters!'')?no_esc}&code_challenge=${(code_challenge?url)!''}&code_challenge_method=${(code_challenge_method?url)!''}&user_code=${(user_code?url)!''}">
-[#nested/]
-</a>
-[/#macro]
-
-[#macro linkButton url color="" extraParameters=""]
-<a class="btn ${color}" href="${url}?tenantId=${(tenantId)!''}&client_id=${(client_id?url)!''}&nonce=${(nonce?url)!''}&pendingIdPLinkId=${(pendingIdPLinkId)!''}&redirect_uri=${(redirect_uri?url)!''}&response_mode=${(response_mode?url)!''}&response_type=${(response_type?url)!''}&scope=${(scope?url)!''}&state=${(state?url)!''}&timezone=${(timezone?url)!''}&metaData.device.name=${(metaData.device.name?url)!''}&metaData.device.type=${(metaData.device.type?url)!''}${(extraParameters!'')?no_esc}&code_challenge=${(code_challenge?url)!''}&code_challenge_method=${(code_challenge_method?url)!''}&user_code=${(user_code?url)!''}">
+<a href="${url}?tenantId=${(tenantId)!''}&client_id=${(client_id)!''}&nonce=${(nonce?url)!''}&pendingIdPLinkId=${(pendingIdPLinkId)!''}&redirect_uri=${(redirect_uri?url)!''}&response_mode=${(response_mode?url)!''}&response_type=${(response_type?url)!''}&scope=${(scope?url)!''}&state=${(state?url)!''}&timezone=${(timezone?url)!''}&metaData.device.name=${(metaData.device.name?url)!''}&metaData.device.type=${(metaData.device.type?url)!''}${(extraParameters!'')?no_esc}&code_challenge=${(code_challenge?url)!''}&code_challenge_method=${(code_challenge_method?url)!''}&user_code=${(user_code?url)!''}">
 [#nested/]
 </a>
 [/#macro]
 
 [#macro logoutLink redirectURI extraParameters=""]
-[#local post_logout_redirect_uri = "${redirectURI}?tenantId=${(tenantId)!''}&client_id=${(client_id?url)!''}&nonce=${(nonce?url)!''}&pendingIdPLinkId=${(pendingIdPLinkId)!''}&redirect_uri=${(redirect_uri?url)!''}&response_mode=${(response_mode?url)!''}&response_type=${(response_type?url)!''}&scope=${(scope?url)!''}&state=${(state?url)!''}&timezone=${(timezone?url)!''}&metaData.device.name=${(metaData.device.name?url)!''}&metaData.device.type=${(metaData.device.type?url)!''}${(extraParameters?no_esc)!''}&code_challenge=${(code_challenge?url)!''}&code_challenge_method=${(code_challenge_method?url)!''}&user_code=${(user_code?url)!''}"/]
-<a href="/oauth2/logout?tenantId=${(tenantId)!''}&client_id=${(client_id?url)!''}&post_logout_redirect_uri=${post_logout_redirect_uri}">[#t]
+[#-- Note that in order for the post_logout_redirect_uri to be correctly URL escaped, you must use this syntax for assignment --]
+[#local post_logout_redirect_uri]${redirectURI}?tenantId=${(tenantId)!''}&client_id=${(client_id)!''}&nonce=${(nonce?url)!''}&pendingIdPLinkId=${(pendingIdPLinkId)!''}&redirect_uri=${(redirect_uri?url)!''}&response_mode=${(response_mode?url)!''}&response_type=${(response_type?url)!''}&scope=${(scope?url)!''}&state=${(state?url)!''}&timezone=${(timezone?url)!''}&metaData.device.name=${(metaData.device.name?url)!''}&metaData.device.type=${(metaData.device.type?url)!''}${(extraParameters?no_esc)!''}&code_challenge=${(code_challenge?url)!''}&code_challenge_method=${(code_challenge_method?url)!''}&user_code=${(user_code?url)!''}[/#local]
+<a href="/oauth2/logout?tenantId=${(tenantId)!''}&client_id=${(client_id)!''}&post_logout_redirect_uri=${post_logout_redirect_uri?markup_string?url}">[#t]
   [#nested/][#t]
 </a>[#t]
 [/#macro]
@@ -989,31 +982,25 @@
 [/#macro]
 
 [#macro passwordRules passwordValidationRules]
-<div class="alert alert-error shadow-lg space-y-2 mt-2 mb-4">
-  <div>
-    <div>
-      <h3 class="font-bold">
-        ${theme.message('password-constraints-intro')}
-      </h3>
-      <div class="text-xs">
-        <ul>
-          <li>${theme.message('password-length-constraint', passwordValidationRules.minLength, passwordValidationRules.maxLength)}</li>
-          [#if passwordValidationRules.requireMixedCase]
-            <li>${theme.message('password-case-constraint')}</li>
-          [/#if]
-          [#if passwordValidationRules.requireNonAlpha]
-            <li>${theme.message('password-alpha-constraint')}</li>
-          [/#if]
-          [#if passwordValidationRules.requireNumber]
-            <li>${theme.message('password-number-constraint')}</li>
-          [/#if]
-          [#if passwordValidationRules.rememberPreviousPasswords.enabled]
-            <li>${theme.message('password-previous-constraint', passwordValidationRules.rememberPreviousPasswords.count)}</li>
-          [/#if]
-        </ul>
-      </div>
-    </div>
-  </div>
+<div class="font-italic">
+  <span>
+    ${theme.message('password-constraints-intro')}
+  </span>
+  <ul>
+    <li>${theme.message('password-length-constraint', passwordValidationRules.minLength, passwordValidationRules.maxLength)}</li>
+    [#if passwordValidationRules.requireMixedCase]
+      <li>${theme.message('password-case-constraint')}</li>
+    [/#if]
+    [#if passwordValidationRules.requireNonAlpha]
+      <li>${theme.message('password-alpha-constraint')}</li>
+    [/#if]
+    [#if passwordValidationRules.requireNumber]
+      <li>${theme.message('password-number-constraint')}</li>
+    [/#if]
+    [#if passwordValidationRules.rememberPreviousPasswords.enabled]
+      <li>${theme.message('password-previous-constraint', passwordValidationRules.rememberPreviousPasswords.count)}</li>
+    [/#if]
+  </ul>
 </div>
 [/#macro]
 
@@ -1062,7 +1049,7 @@
   [/#if]
 [/#function]
 
-[#macro passwordField field]
+[#macro passwordField field showCurrentPasswordField=false]
   [#-- Render checkbox used to determine whether the form submit should update password--]
   <div class="form-row">
     <label for="editPasswordOption"> ${theme.optionalMessage("change-password")} </label>
@@ -1074,6 +1061,11 @@
     </label>
   </div>
   <div id="password-fields" class="slide-open ${(editPasswordOption == "update")?then('open', '')}">
+    [#-- See if the application requires the current password --]
+    [#if showCurrentPasswordField]
+      [@customField field=field key="currentPassword" autofocus=false label=theme.optionalMessage("current-password")/]
+    [/#if]
+
     [#-- Show the Password Validation Rules if there is a field error for 'user.password' --]
     [#if (fieldMessages?keys?seq_contains("user.password")!false) && passwordValidationRules??]
       [@passwordRules passwordValidationRules/]
@@ -1113,7 +1105,13 @@
   [#-- If you want to remove captcha from the page, also ensure you disable it in the tenant configruation. --]
   [#if showCaptcha]
     [#if captchaMethod == "GoogleRecaptchaV2"]
-      <div class="g-recaptcha" data-sitekey="${siteKey!''}"></div>
+      <div class="g-recaptcha" data-sitekey="${siteKey!''}"
+        [#-- To use the invisible mode, un-comment the following two data- attributes. For more information see: https://developers.google.com/recaptcha/docs/invisible --]
+        [#--
+        data-size="invisible"
+        data-callback="reCaptchaV2InvisibleCallback"
+        --]
+      ></div>
     [#elseif captchaMethod == "GoogleRecaptchaV3"]
       [#-- This is the replacement Terms and Conditions messaging that is required by Google when hiding the
            standard badge. If you want to remove this you will also need to remove or edit the CSS above. --]

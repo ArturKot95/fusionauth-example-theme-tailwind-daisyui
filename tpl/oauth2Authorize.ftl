@@ -8,6 +8,7 @@
 [#-- @ftlvariable name="devicePendingIdPLink" type="io.fusionauth.domain.provider.PendingIdPLink" --]
 [#-- @ftlvariable name="hasDomainBasedIdentityProviders" type="boolean" --]
 [#-- @ftlvariable name="identityProviders" type="java.util.Map<java.lang.String, java.util.List<io.fusionauth.domain.provider.BaseIdentityProvider<?>>>" --]
+[#-- @ftlvariable name="idpRedirectState" type="java.lang.String" --]
 [#-- @ftlvariable name="loginId" type="java.lang.String" --]
 [#-- @ftlvariable name="metaData" type="io.fusionauth.domain.jwt.RefreshToken.MetaData" --]
 [#-- @ftlvariable name="nonce" type="java.lang.String" --]
@@ -48,7 +49,7 @@
       [#-- Custom header code goes here --]
     [/@helpers.header]
 
-    [@helpers.main title=theme.message('login')]
+    [@helpers.main title="Login"]
       [#-- During a linking work flow, optionally indicate to the user which IdP is being linked. --]
       [#if devicePendingIdPLink?? || pendingIdPLink??]
         <p class="mt-0">
@@ -72,8 +73,7 @@
         [#if showPasswordField && hasDomainBasedIdentityProviders]
           [@helpers.hidden name="loginId"/]
         [/#if]
-
-        <fieldset class="space-y-2">
+        <fieldset>
           [@helpers.input type="text" name="loginId" id="loginId" autocomplete="username" autocapitalize="none" autocomplete="on" autocorrect="off" spellcheck="false" autofocus=(!loginId?has_content) placeholder=theme.message('loginId') leftAddon="user" disabled=(showPasswordField && hasDomainBasedIdentityProviders)/]
           [#if showPasswordField]
             [@helpers.input type="password" name="password" id="password" autocomplete="current-password" autofocus=loginId?has_content placeholder=theme.message('password') leftAddon="lock"/]
@@ -81,22 +81,17 @@
           [/#if]
         </fieldset>
 
-        <fieldset class="mt-4">
           [@helpers.input id="rememberDevice" type="checkbox" name="rememberDevice" label=theme.message('remember-device') value="true" uncheckedValue="false"]
-            <div class="tooltip tooltip-right" data-tip="${theme.message('{tooltip}remember-device')}">
-              <i class="fa fa-info-circle"></i>[#t/]
-            </div>
           [/@helpers.input]
-        </fieldset>
 
-        <div class="mt-4 flex justify-between items-center">
-          [#if showPasswordField]
-            [@helpers.button color="btn-primary" icon="key" text=theme.message('submit')/]
-            [@helpers.link url="${request.contextPath}/password/forgot"]${theme.message('forgot-your-password')}[/@helpers.link]
-          [#else]
-            [@helpers.button icon="arrow-right" text=theme.message('next')/]
-          [/#if]
-        </div>
+          <div class="form-row forgot-password-row">
+            [#if showPasswordField]
+              [@helpers.button icon="key" text="Sign in"/]
+              [@helpers.link url="${request.contextPath}/password/forgot"]${theme.message('forgot-your-password')}[/@helpers.link]
+            [#else]
+              [@helpers.button icon="arrow-right" text=theme.message('next')/]
+            [/#if]
+          </div>
       </form>
       <div>
         [#if showPasswordField && hasDomainBasedIdentityProviders]
@@ -104,21 +99,16 @@
         [/#if]
       </div>
       [#if application.registrationConfiguration.enabled]
-        <div class="divider">
-          <span>${theme.message('or')}</span>
-        </div>
-
-        <div>
+        <div class="form-row push-top no-account-row">
           ${theme.message('dont-have-an-account')}
+          <div>[@helpers.link url="${request.contextPath}/oauth2/register"]Register[/@helpers.link]</div>
         </div>
-
-        [@helpers.linkButton url="${request.contextPath}/oauth2/register" color="btn-primary"]${theme.message('create-an-account')}[/@helpers.linkButton]
       [/#if]
 
      [#if showWebAuthnReauthLink]
        [@helpers.link url="${request.contextPath}/oauth2/webauthn-reauth"] ${theme.message('return-to-webauthn-reauth')} [/@helpers.link]
      [/#if]
-      [@helpers.alternativeLogins clientId=client_id identityProviders=identityProviders passwordlessEnabled=passwordlessEnabled bootstrapWebauthnEnabled=bootstrapWebauthnEnabled/]
+      [@helpers.alternativeLogins clientId=client_id identityProviders=identityProviders passwordlessEnabled=passwordlessEnabled bootstrapWebauthnEnabled=bootstrapWebauthnEnabled idpRedirectState=idpRedirectState/]
     [/@helpers.main]
 
     [@helpers.footer]
