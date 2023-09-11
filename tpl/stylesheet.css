@@ -59,14 +59,8 @@ input[type="password"] {
 
 .login-button {
   font-family: "Baloo 2", arial !important;
-  background-color: #e2e8f0 !important;
-  border: solid 2px #e2e8f0 !important;
   border-radius: 8px !important;
   overflow: hidden;
-}
-
-.login-button .text {
-  color: #0f172a !important;
 }
 
 .input-addon-group {
