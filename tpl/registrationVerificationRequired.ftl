@@ -12,7 +12,7 @@
 [@helpers.html]
   [@helpers.head]
     [@helpers.captchaScripts showCaptcha=showCaptcha captchaMethod=tenant.captchaConfiguration.captchaMethod siteKey=tenant.captchaConfiguration.siteKey/]
-    [#-- Custom <head> code goes here --] 
+    [#-- Custom <head> code goes here --]
   [/@helpers.head]
   [@helpers.body]
     [@helpers.header]

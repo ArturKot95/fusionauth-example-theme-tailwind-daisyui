@@ -24,8 +24,9 @@
     [/@helpers.header]
 
     [@helpers.main title=theme.message('logging-out')]
-      <div class="progress-bar" >
-        <div style="animation-duration: ${logoutDurationInSeconds + 1}s; animation-timing-function: ease-out;">
+      <h2>Logging out...</h2>
+      <div class="progress-bar">
+        <div style="animation-duration: ${logoutDurationInSeconds + 1}s; animation-timing-function: ease-out; background-color: #22c55e;">
         </div>
       </div>
     [/@helpers.main]

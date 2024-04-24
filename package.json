@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "watch:tailwind": "tailwindcss -i ./input.css -o ./tpl/stylesheet.css --watch",
-    "watch:theme": "fusionauth theme:watch e765d2d7-bc58-4542-a1f0-dc2ffdd7529f -k OzDRnPaeprmY4kJIEuNo8bTZVF2CrjiwaM4fAkTm_5VK_PhmsXK8p_Tr -h http://localhost:9011"
+    "watch:theme": "fusionauth theme:watch 21973e7e-9942-4ab8-b513-ae2b3d7de398 -k AkT-BhmIuNK1IIHtXZkAz1UWCaOUXQF9b6g52b-bagSOOaxj2G4C7XQZ -h https://codesmooth.fusionauth.io"
   },
   "keywords": [],
   "author": "",

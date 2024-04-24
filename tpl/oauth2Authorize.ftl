@@ -6,6 +6,7 @@
 [#-- @ftlvariable name="code_challenge" type="java.lang.String" --]
 [#-- @ftlvariable name="code_challenge_method" type="java.lang.String" --]
 [#-- @ftlvariable name="devicePendingIdPLink" type="io.fusionauth.domain.provider.PendingIdPLink" --]
+[#-- @ftlvariable name="federatedCSRFToken" type="java.lang.String" --]
 [#-- @ftlvariable name="hasDomainBasedIdentityProviders" type="boolean" --]
 [#-- @ftlvariable name="identityProviders" type="java.util.Map<java.lang.String, java.util.List<io.fusionauth.domain.provider.BaseIdentityProvider<?>>>" --]
 [#-- @ftlvariable name="idpRedirectState" type="java.lang.String" --]
@@ -46,10 +47,12 @@
   [@helpers.body]
 
     [@helpers.header]
-      [#-- Custom header code goes here --]
     [/@helpers.header]
 
-    [@helpers.main title="Login"]
+    [@helpers.main]
+<div style="display: flex; justify-content: center; margin-bottom: 30px;">
+<img alt="CodeSmooth" rel="_noreferrer" src="http://localhost:3000/build/_assets/codesmooth-logo-R5GAVIB6.svg" width="240" height="50" />
+</div>
       [#-- During a linking work flow, optionally indicate to the user which IdP is being linked. --]
       [#if devicePendingIdPLink?? || pendingIdPLink??]
         <p class="mt-0">
@@ -73,6 +76,7 @@
         [#if showPasswordField && hasDomainBasedIdentityProviders]
           [@helpers.hidden name="loginId"/]
         [/#if]
+
         <fieldset>
           [@helpers.input type="text" name="loginId" id="loginId" autocomplete="username" autocapitalize="none" autocomplete="on" autocorrect="off" spellcheck="false" autofocus=(!loginId?has_content) placeholder=theme.message('loginId') leftAddon="user" disabled=(showPasswordField && hasDomainBasedIdentityProviders)/]
           [#if showPasswordField]
@@ -82,11 +86,12 @@
         </fieldset>
 
           [@helpers.input id="rememberDevice" type="checkbox" name="rememberDevice" label=theme.message('remember-device') value="true" uncheckedValue="false"]
+            <i class="fa fa-info-circle" data-tooltip="${theme.message('{tooltip}remember-device')}"></i>[#t/]
           [/@helpers.input]
 
-          <div class="form-row forgot-password-row">
+          <div class="form-row">
             [#if showPasswordField]
-              [@helpers.button icon="key" text="Sign in"/]
+              [@helpers.button color="green" icon="key" text="Login"/]
               [@helpers.link url="${request.contextPath}/password/forgot"]${theme.message('forgot-your-password')}[/@helpers.link]
             [#else]
               [@helpers.button icon="arrow-right" text=theme.message('next')/]
@@ -99,16 +104,16 @@
         [/#if]
       </div>
       [#if application.registrationConfiguration.enabled]
-        <div class="form-row push-top no-account-row">
-          ${theme.message('dont-have-an-account')}
-          <div>[@helpers.link url="${request.contextPath}/oauth2/register"]Register[/@helpers.link]</div>
+        <div class="form-row push-top">
+          ${theme.message('dont-have-an-account')}<br/>
+          [@helpers.link url="${request.contextPath}/oauth2/register"]${theme.message('create-an-account')}[/@helpers.link]
         </div>
       [/#if]
 
      [#if showWebAuthnReauthLink]
        [@helpers.link url="${request.contextPath}/oauth2/webauthn-reauth"] ${theme.message('return-to-webauthn-reauth')} [/@helpers.link]
      [/#if]
-      [@helpers.alternativeLogins clientId=client_id identityProviders=identityProviders passwordlessEnabled=passwordlessEnabled bootstrapWebauthnEnabled=bootstrapWebauthnEnabled idpRedirectState=idpRedirectState/]
+      [@helpers.alternativeLogins clientId=client_id identityProviders=identityProviders passwordlessEnabled=passwordlessEnabled bootstrapWebauthnEnabled=bootstrapWebauthnEnabled idpRedirectState=idpRedirectState federatedCSRFToken=federatedCSRFToken/]
     [/@helpers.main]
 
     [@helpers.footer]

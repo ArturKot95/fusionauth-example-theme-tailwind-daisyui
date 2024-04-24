@@ -32,13 +32,13 @@
 </html>
 [/#macro]
 
-[#macro head title="Login | CodeSmooth" author="CodeSmooth" description="Login to CodeSmooth programming learning platform."]
+[#macro head title="Login | CodeSmooth" author="CodeSmooth" description="Learning Programming the Fun Way."]
 <head>
   <title>${title}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta name="application-name" content="FusionAuth">
-  <meta name="author" content="FusionAuth">
+  <meta name="application-name" content="CodeSmooth">
+  <meta name="author" content="CodeSmooth">
   <meta name="description" content="${description}">
   <meta name="robots" content="index, follow">
 
@@ -93,7 +93,7 @@
     </style>
   [/#if]
 
-  <script src="${request.contextPath}/js/prime-min-1.6.4.js?version=${version}"></script>
+  <script src="${request.contextPath}/js/prime-min-1.7.0.js?version=${version}"></script>
   <script src="${request.contextPath}/js/Util.js?version=${version}"></script>
   <script src="${request.contextPath}/js/oauth2/LocaleSelect.js?version=${version}"></script>
   <script>
@@ -135,7 +135,21 @@
 [/#macro]
 
 [#macro header]
-  
+  <!-- <header class="app-header">
+    <div class="right-menu" [#if request.requestURI == "/"]style="display: block !important;" [/#if]>
+      <nav>
+        <ul>
+          [#if request.requestURI == "/"]
+            <li><a href="${request.contextPath}/admin/" title="Administrative login"><i class="fa fa-lock" style="font-size: 18px;"></i></a></li>
+          [#elseif request.requestURI?starts_with("/account")]
+            <li><a href="${request.contextPath}/account/logout?client_id=${client_id!''}" title="Logout"><i class="fa fa-sign-out"></i></a></li>
+          [#else]
+            <li class="help"><a target="_blank" href="https://fusionauth.io/docs/"><i class="fa fa-question-circle-o"></i> ${theme.message("help")}</a></li>
+          [/#if]
+        </ul>
+      </nav>
+    </div>
+  </header> -->
 
   [#nested/]
 [/#macro]
@@ -173,13 +187,15 @@
   [/#if]
 [/#macro]
 
-[#macro main title="Login" rowClass="row center-xs" colClass="col-xs col-sm-10 col-md-8 col-lg-6 col-xl-5"]
+[#macro main title="Login" rowClass="row center-xs" colClass="col-xs col-sm-8 col-md-6 col-lg-5 col-xl-4"]
 <main class="page-body container">
   [@printErrorAlerts rowClass colClass/]
   [@printInfoAlerts rowClass colClass/]
   <div class="${rowClass}">
     <div class="${colClass}">
       <div class="panel" data-in-progress>
+        [#if title?has_content]
+        [/#if]
         <main>
           [#nested/]
         </main>
@@ -208,7 +224,14 @@
 [/#macro]
 
 [#macro localSelector]
-
+<!-- <label class="select">
+  <select id="locale-select" name="locale" class="select">
+    <option value="en" [#if locale == 'en']selected[/#if]>English</option>
+      [#list theme.additionalLocales() as l]
+        <option value="${l}" [#if locale == l]selected[/#if]>${l.getDisplayLanguage(locale)}</option>
+      [/#list]
+  </select>
+</label> -->
 [/#macro]
 
 [#macro accountFooter rowClass colClass actionURL actionText actionDirection]
@@ -330,7 +353,7 @@
      <div class="icon">
       <svg version="1.1" viewBox="4 6 30 30" xmlns="http://www.w3.org/2000/svg">
         <g id="Left-Black-Logo-Large" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-          <path class="cls-1" d="M19.8196726,13.1384615 C20.902953,13.1384615 22.2608678,12.406103 23.0695137,11.4296249 C23.8018722,10.5446917 24.3358837,9.30883662 24.3358837,8.07298156 C24.3358837,7.9051494 24.3206262,7.73731723 24.2901113,7.6 C23.0847711,7.64577241 21.6353115,8.4086459 20.7656357,9.43089638 C20.0790496,10.2090273 19.4534933,11.4296249 19.4534933,12.6807374 C19.4534933,12.8638271 19.4840083,13.0469167 19.4992657,13.1079466 C19.5755531,13.1232041 19.6976128,13.1384615 19.8196726,13.1384615 Z M16.0053051,31.6 C17.4852797,31.6 18.1413509,30.6082645 19.9875048,30.6082645 C21.8641736,30.6082645 22.2761252,31.5694851 23.923932,31.5694851 C25.5412238,31.5694851 26.6245041,30.074253 27.6467546,28.6095359 C28.7910648,26.9312142 29.2640464,25.2834075 29.2945613,25.2071202 C29.1877591,25.1766052 26.0904927,23.9102352 26.0904927,20.3552448 C26.0904927,17.2732359 28.5316879,15.8848061 28.6690051,15.7780038 C27.0517133,13.4588684 24.5952606,13.3978385 23.923932,13.3978385 C22.1082931,13.3978385 20.6283185,14.4963764 19.6976128,14.4963764 C18.6906198,14.4963764 17.36322,13.4588684 15.7917006,13.4588684 C12.8012365,13.4588684 9.765,15.9305785 9.765,20.5993643 C9.765,23.4982835 10.8940528,26.565035 12.2824825,28.548506 C13.4725652,30.2268277 14.5100731,31.6 16.0053051,31.6 Z" id="���"  fill-rule="nonzero"></path>
+          <path class="cls-1" d="M19.8196726,13.1384615 C20.902953,13.1384615 22.2608678,12.406103 23.0695137,11.4296249 C23.8018722,10.5446917 24.3358837,9.30883662 24.3358837,8.07298156 C24.3358837,7.9051494 24.3206262,7.73731723 24.2901113,7.6 C23.0847711,7.64577241 21.6353115,8.4086459 20.7656357,9.43089638 C20.0790496,10.2090273 19.4534933,11.4296249 19.4534933,12.6807374 C19.4534933,12.8638271 19.4840083,13.0469167 19.4992657,13.1079466 C19.5755531,13.1232041 19.6976128,13.1384615 19.8196726,13.1384615 Z M16.0053051,31.6 C17.4852797,31.6 18.1413509,30.6082645 19.9875048,30.6082645 C21.8641736,30.6082645 22.2761252,31.5694851 23.923932,31.5694851 C25.5412238,31.5694851 26.6245041,30.074253 27.6467546,28.6095359 C28.7910648,26.9312142 29.2640464,25.2834075 29.2945613,25.2071202 C29.1877591,25.1766052 26.0904927,23.9102352 26.0904927,20.3552448 C26.0904927,17.2732359 28.5316879,15.8848061 28.6690051,15.7780038 C27.0517133,13.4588684 24.5952606,13.3978385 23.923932,13.3978385 C22.1082931,13.3978385 20.6283185,14.4963764 19.6976128,14.4963764 C18.6906198,14.4963764 17.36322,13.4588684 15.7917006,13.4588684 C12.8012365,13.4588684 9.765,15.9305785 9.765,20.5993643 C9.765,23.4982835 10.8940528,26.565035 12.2824825,28.548506 C13.4725652,30.2268277 14.5100731,31.6 16.0053051,31.6 Z" id=""  fill-rule="nonzero"></path>
         </g>
       </svg>
      </div>
@@ -574,9 +597,9 @@
 </button>
 [/#macro]
 
-[#macro alternativeLogins clientId identityProviders passwordlessEnabled bootstrapWebauthnEnabled=false idpRedirectState=""]
+[#macro alternativeLogins clientId identityProviders passwordlessEnabled bootstrapWebauthnEnabled=false idpRedirectState="" federatedCSRFToken=""]
   [#if identityProviders?has_content || passwordlessEnabled || bootstrapWebauthnEnabled]
-    <div class="login-button-container">
+    <div id="login-button-container" class="login-button-container" data-federated-csrf="${federatedCSRFToken}">
       <div class="hr-container">
         <hr>
         <div>${theme.message('or')}</div>
@@ -625,7 +648,7 @@
 
       [#if identityProviders["Apple"]?has_content]
       <div class="form-row push-less-top">
-        [@appleButton identityProvider=identityProviders["Apple"][0] clientId=clientId /]
+        [@appleButton identityProvider=identityProviders["Apple"][0] clientId=clientId/]
       </div>
       [/#if]
 
@@ -917,17 +940,28 @@
 </div>
 [/#macro]
 
-[#macro locale_select field name id autocapitalize="none" autofocus=false label="" required=false tooltip="" disabled=false class="checkbox-list" options=[]]
+[#macro locale_select field name id autofocus=false label="" required=false tooltip="" class="select"]
   [#-- Note: This is a simple imlementation that does not support selecting more than one locale.
              You may wish to use a multi-select or some other JavaScript widget to allow for more than one selection and to improve UX --]
   [#local value=("((" + name + ")!'')")?eval/]
   <div class="form-row">
-    <select name="${name}" id="${id}" class="${class}">
+    [#if label?has_content][#t/]
+    <label for="${id}"[#if (fieldMessages[name]![])?size > 0] class="error"[/#if]>${label}[#if required] <span class="required">*</span>[/#if][#t/]
+      [#if tooltip?has_content][#t/]
+        <i class="fa fa-info-circle" data-tooltip="${tooltip}"></i>[#t/]
+      [/#if][#t/]
+    </label>[#t/]
+    [/#if]
+    <label class="select">
+      <select name="${name}" id="${id}" class="${class}" [#if autofocus]autofocus="autofocus"[/#if]>
+        <option value="">${theme.optionalMessage("none-selected")}</option>
       [#list fusionAuth.locales() as l, n]
         [#local checked = value?is_sequence && value?seq_contains(l)/]
         <option  value="${l}" [#if checked]selected[/#if]>${l.getDisplayName()}</option>
       [/#list]
-    </select>
+     </select>
+   </label>
+   [@errors field=name/]
   </div>
 [/#macro]
 
@@ -960,7 +994,7 @@
 [/#macro]
 
 [#macro button text icon="arrow-right" color="blue" disabled=false name="" value=""]
-<button class="button${disabled?then(' disabled', '')}"[#if disabled] disabled="disabled"[/#if][#if name !=""]name="${name}"[/#if][#if value !=""]value="${value}"[/#if]><i class="fa fa-${icon}"></i> ${text}</button>
+<button class="${color} button${disabled?then(' disabled', '')}"[#if disabled] disabled="disabled"[/#if][#if name !=""]name="${name}"[/#if][#if value !=""]value="${value}"[/#if]><i class="fa fa-${icon}"></i> ${text}</button>
 [/#macro]
 
 [#macro link url extraParameters=""]
@@ -1009,7 +1043,7 @@
   [#local leftAddon = (leftAddon == "true")?then(field.data.leftAddon!'info', "") /]
 
   [#if field.key == "user.preferredLanguages" || field.key == "registration.preferredLanguages"]
-    [@locale_select field=field id=fieldId name=field.key required=field.required autofocus=autofocus label=label /]
+    [@locale_select field=field id="${fieldId}" name="${field.key}" required=field.required autofocus=autofocus label=label /]
   [#elseif field.control == "checkbox"]
     [#if field.options?has_content]
       [@checkbox_list field=field id="${fieldId}" name="${key}" required=field.required autofocus=autofocus label=label options=field.options /]

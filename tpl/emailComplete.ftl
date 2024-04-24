@@ -18,6 +18,7 @@
       <p>
         ${theme.message('email-verification-complete')}
       </p>
+      <a href="https://codesmooth.dev">Return to CodeSmooth</a>
     [/@helpers.main]
 
     [@helpers.footer]
