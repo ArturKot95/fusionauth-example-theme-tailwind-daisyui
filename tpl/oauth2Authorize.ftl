@@ -51,7 +51,7 @@
 
     [@helpers.main]
 <div style="display: flex; justify-content: center; margin-bottom: 30px;">
-<img alt="CodeSmooth" rel="_noreferrer" src="http://localhost:3000/build/_assets/codesmooth-logo-R5GAVIB6.svg" width="240" height="50" />
+<img alt="CodeSmooth" rel="_noreferrer" src="https://storage.googleapis.com/codesmooth-resources/public/codesmooth-logo.svg" width="240" height="50" />
 </div>
       [#-- During a linking work flow, optionally indicate to the user which IdP is being linked. --]
       [#if devicePendingIdPLink?? || pendingIdPLink??]

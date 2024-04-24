@@ -2004,3 +2004,8 @@ html {
 .text-right {
   text-align: right;
 }
+
+body {
+  background-color: #f8fafc;
+  font-size: 14px;
+}
