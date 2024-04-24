@@ -2009,3 +2009,7 @@ body {
   background-color: #f8fafc;
   font-size: 14px;
 }
+
+.panel {
+  border-color: #a855f7;
+}
