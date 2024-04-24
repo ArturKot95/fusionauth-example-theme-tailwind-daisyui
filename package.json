@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "watch:tailwind": "tailwindcss -i ./input.css -o ./tpl/stylesheet.css --watch",
-    "watch:theme": "fusionauth theme:watch 21973e7e-9942-4ab8-b513-ae2b3d7de398 -k AkT-BhmIuNK1IIHtXZkAz1UWCaOUXQF9b6g52b-bagSOOaxj2G4C7XQZ -h https://codesmooth.fusionauth.io"
+    "watch:theme": "dotenv fusionauth theme:watch $THEME_ID -k $API_KEY -h https://codesmooth.fusionauth.io"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +13,7 @@
   "dependencies": {
     "@fusionauth/cli": "^1.0.0",
     "daisyui": "^2.51.6",
+    "dotenv": "^16.4.5",
     "tailwindcss": "^3.3.2"
   }
 }
