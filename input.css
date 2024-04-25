@@ -2,11 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+
 body {
   background-color: #f8fafc;
   font-size: 14px;
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: medium;
+  font-style: normal;
+  font-variation-settings: "slnt" 0;
 }
 
 .panel {
   border-color: #9333ea;
+}
+
+.progress-bar {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+button.green {
+  background-color: #16a34a !important;
 }

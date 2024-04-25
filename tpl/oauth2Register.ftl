@@ -43,6 +43,9 @@
     [/@helpers.header]
 
     [@helpers.main title=theme.message('register')]
+<div style="display: flex; justify-content: center; margin-bottom: 30px;">
+<img alt="CodeSmooth" rel="_noreferrer" src="https://storage.googleapis.com/codesmooth-resources/public/codesmooth-logo.svg" width="240" height="50" />
+</div>
       [#-- During a linking work flow, optionally indicate to the user which IdP is being linked. --]
       [#if devicePendingIdPLink?? || pendingIdPLink??]
         <p class="mt-0">
@@ -169,7 +172,7 @@
 
         [#-- Begin Self Service Custom Registration Form Step Counter --]
         [#if step > 0]
-          <div class="w-100 mt-3" style="display: inline-flex; flex-direction: row; justify-content: space-evenly;">
+          <div class="mt-3 w-100" style="display: inline-flex; flex-direction: row; justify-content: space-evenly;">
             <div class="text-right" style="flex-grow: 1;"> ${theme.message('register-step', step, totalSteps)} </div>
           </div>
         [/#if]
